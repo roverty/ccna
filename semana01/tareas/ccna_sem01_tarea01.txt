@@ -1,0 +1,11 @@
+Router
+Hostname: RODRIGO
+nombre usuario: rfrancisco
+contraseña: ccna-gen21
+Contraseña enable: cisco
+
+Switch
+Hostname: FRANCISCO
+nombre usuario: rfrancisco
+contraseña: ccna-gen21
+Contraseña enable: cisco
