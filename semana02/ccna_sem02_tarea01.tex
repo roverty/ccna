@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{anysize}
+\usepackage{fancyhdr} 
+\usepackage[export]{adjustbox}
+\usepackage{titlesec}
+\usepackage{enumitem}
+% \usepackage{hyperref}
+% \usepackage{float}
+% \usepackage{tabu}
+
+% Izquierda, derecha, arriba, abajo
+\marginsize{2cm}{2cm}{1.2cm}{1.5cm} 
+\renewcommand{\familydefault}{\sfdefault}
+\decimalpoint%
+
+\graphicspath{{README.assets/}{template.assets/}{topologias/}}
+
+\setlength{\parindent}{0in}
+\titleformat*{\section}{\large\bfseries}
+
+\newcommand{\materia}{CCNA V7}
+% \newcommand{\clave}{}
+% \newcommand{\profesor}{Ing. Rodriguez Campos \textsc{Jorge Alberto}}
+\newcommand{\grupo}{1}
+\newcommand{\semestre}{2021-1}
+
+\newcommand{\alumno}{Francisco Pablo \textsc{Rodrigo}}
+
+\newcommand{\actividad}{Tarea 02}
+\newcommand{\titulo}{Dominios de colisión y broadcast}
+
+\newcommand{\fechaEntrega}{3 de octubre de 2020}
+
+%%%%%%%%%%%%%%%%%%%% ENCABEZADO %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+% \setlength{\headsep}{0.3in}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%% DATOS MINI PORTADA %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}[t]{0.7\linewidth}
+    \vspace{-1cm}
+    % \large{\textbf{UNAM}} \large{\textbf{FI}} \\
+    \large{\textbf{\materia}}\\
+    \large{\textbf{Grupo \grupo}}\\
+    % \large{\textbf{Profesor:} \profesor}\\ [1.5cm]
+    \textbf{\actividad}\\
+    \textbf{\titulo} \\
+
+    \large{\textbf{Alumno:} \alumno} \\
+    \textbf{Fecha:} \fechaEntrega%
+\end{minipage}\hfill
+\begin{minipage}[t]{0.2\linewidth}
+    \vspace{-1.2cm}
+    \begin{flushright}
+        % \includegraphics[width=2cm]{fiblack}
+        \includegraphics[width=2cm]{unam.jpg}\\
+        % \vspace{10cm}
+        \large{\semestre}    
+    \end{flushright}
+\end{minipage}
+\vspace{5mm}
+%%%%%%%%%%%%%%%%%%% CONTENIDO %%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Encerrar}
+\begin{itemize}
+    \item los dominios de colisión y 
+    \item los dominios broadcast, 
+\end{itemize}
+\textbf{Al igual deben colocar en la imagen el número total de colisiones y 
+broadcast}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{}\\ \includegraphics[width=14.4cm]{top01-res}
+    \begin{itemize}
+        \item Dominios de colisión: 19
+        \item Dominios de broadcast: 1
+    \end{itemize}
+    \item \textbf{}\\ \includegraphics[width=14.4cm]{top02-res}
+    \begin{itemize}
+        \item Dominios de colisión: 21
+        \item Dominios de broadcast: 1
+    \end{itemize}
+    \item \textbf{}\\ \includegraphics[width=14.4cm]{top03-res}
+    \begin{itemize}
+        \item Dominios de colisión: 17
+        \item Dominios de broadcast: 1
+    \end{itemize}
+    \item \textbf{}\\ \includegraphics[width=14.6cm]{top04-res}
+    \begin{itemize}
+        \item Dominios de colisión: 1
+        \item Dominios de broadcast: 1
+    \end{itemize}    
+    \item \textbf{}\\ \includegraphics[width=14.4cm]{top05-res}
+    \begin{itemize}
+        \item Dominios de colisión: 17
+        \item Dominios de broadcast: 5
+    \end{itemize}    
+\end{enumerate}
+
+\end{document}

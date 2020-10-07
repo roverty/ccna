@@ -1,0 +1,4 @@
+Para todos los dispositivos las contraseñas son:
+username: rodrigo
+password: francisco
+enable: pablo

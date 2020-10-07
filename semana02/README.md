@@ -313,6 +313,8 @@ no shutdown
 
 ![ssh](README.assets/ssh.png)
 
+> DUDA: ¿Por qué no se prefiere configurar el Switch con ssh?
+
 1. Configuración
 
    ```sh
