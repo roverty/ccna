@@ -272,3 +272,18 @@ ipconfig /all
 
 Comprobar conexión ente host con un *ping*
 
+### Tareas
+
+* En el video titulado clase 9, hablaremos de IPv6, favor de hacer las simulaciones mostradas en clase y enviarlas por correo.
+
+* Tienen que hacer un VLSM con el respectivo segmento de red que se les otorga a continuación y al terminarlo colocarle IP´s útiles a los host, routers y switches. Favor de enviar la simulación junto con la hoja escaneada, foto o excel de sus cálculos donde venga segmento de red, rango de IP´s útiles, broadcast y máscara.
+
+  Esta es la topología donde deberán configurar su IP´s útiles que les haya dado su VLSM
+
+  ![top](vlsm/topologia.jpeg)
+
+  **Segmento asignado: 10.0.6.0/8**
+
+  En estas imágenes vienen los segmentos de red que cada quien debe ocupar para empezar a particion y los números de host para hacer su VLSM. Ningún packet tracer puede ser igual cuando me toque revisarlos, favor de hacerlo individual y evitar la pena de una sanción o sacarlos del curso por andar copiando o pasarse los packet tracer... Esto lo hago con la finalidad de que practiquen y ustedes solos vean sus propios errores.
+
+  ![](vlsm/asig_ejemplo.jpeg)
