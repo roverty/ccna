@@ -1,0 +1,17 @@
+S0
+ena: 123
+username: rod
+pass: 123
+
+S1
+ena: 123
+username: fran
+pass: 123
+
+S2
+ena: 123
+username: pab
+pass: 123
+
+Servidor WEB:
+www.virusgratis.com
