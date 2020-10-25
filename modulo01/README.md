@@ -61,7 +61,7 @@ line vty 0 15
 login local
 
 ###################################################
-########## 		SSH configuracion			#######
+#	 		SSH configuracion			
 ###################################################
 ip domain name <NOMBRE>
 crypto key generate rsa
@@ -77,7 +77,7 @@ line vty 0 15
 transport input ssh
 
 ###################################################
-#####		Guardar configuracion 			#######
+# 			Guardar configuracion 	
 ###################################################
 # M-P: Primera forma
 copy running-config startup-config
@@ -89,7 +89,7 @@ wr
 reload
 
 ###################################################
-###### 			Configuración de IPv4 		#######
+#	 			Configuración de IPv4 
 ###################################################
 # Configuracion para switch
 interface vlan 1
@@ -116,8 +116,8 @@ show mac-address-table
 clear mac-address-table
 
 ###################################################
-###### 			Configuración de IPv6 		#######
-###### 		con direccionamiento estático	#######
+#	 			Configuración de IPv6 	
+#	 		con direccionamiento estático	
 ###################################################
 # Activar ipv6
 ipv6 unicast-routing
@@ -126,8 +126,8 @@ ipv5 address 2001::DB8:CAFE:1::1/64
 no shutdown
 
 ###################################################
-###### 			Configuración de IPv6 		#######
-###### 		con direccionamiento EUI-64		#######
+# 			Configuración de IPv6 		
+#		con direccionamiento EUI-64		
 ###################################################
 # Activar ipv6
 ipv6 unicast-routing
@@ -137,7 +137,7 @@ ipv5 address 2001::DB8:CAFE:1::1/64 eui-64
 no shutdown
 
 ###################################################
-###### 			Enrutamiento por RIP 		#######
+#	 			Enrutamiento por RIP 	
 ###################################################
 router rip
 version 2
@@ -148,7 +148,7 @@ network <IP>
 show ip route
 
 ###################################################
-#### Configuración de router como DHCP y DNS ######
+#	 Configuración de router como DHCP y DNS 
 ###################################################
 ip dhcp pool <NOMBREPOOL>
 # Dar de alta la red 
@@ -169,7 +169,7 @@ show ip dhcp pool
 ip default-gateway <IP>
 
 ###################################################
-###### 	CDP (Cisco Discovery Protocol) 		#######
+#		 CDP (Cisco Discovery Protocol) 		
 ###################################################
 # Ver los dispositivos que tenemos conectados directamente
 show cdp neighbors
