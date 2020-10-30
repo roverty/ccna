@@ -12,9 +12,9 @@ Para definiarla tenemos los siguientes conceptos
   * Router, switch, firewall, IDS (detector de intrusos)
 * Transmisión por señales
   * Cobre, fibra óptica
-* Se basa en estándares y protocolos
 * Tipos
   * LAN y WAN
+* Se basa en Estándares y protocolos
 
 La red de datos es una conexión entre dispositivos finales e intermediarios que se rigen mediante estándares y/o protocolos que ayudan a corresponder alguna necesidad de un cliente. Se trasmite por medio de señales y a grandes rasgos hay dos tipos: LAN y WAN
 
@@ -25,9 +25,9 @@ La red de datos es una conexión entre dispositivos finales e intermediarios que
 | Administrado por alguna organización individual | Administrador por un ISP                                     |
 |                                                 | Cable serial o fibra óptica                                  |
 
-Diagrama de topología
+### Diagrama de topología
 
-* Física: Ubicación de routers y switch
+* Física: Ubicación físicas de routers y switch
 * Lógica: Con esta configurada
 
 ### Internet
@@ -50,17 +50,31 @@ Un cliente en internet se puede comunicar con una intranet con una VPN (Virtual 
 
 ### Arquitectura de una red
 
-* Tolerancia a fallas: La topología debe ser redundante
-* Calidad de servicio (QoS): Prioridad a los procesos
-* Escalabilidad: Topología robusta (soporta cambios a futuro)
-* Seguridad: 
-  * Disponibilidad
-  * Integridad: Capacidad de aceptar o rechazar un mensaje
-  * Confidencialidad: SOlo debe ser entendido por el destinatario
+* **Tolerancia a fallas**: La topología debe ser redundante
+* **Escalabilidad**: Topología robusta (soporta cambios a futuro)
+* **Calidad de servicio (QoS):** Prioridad a los procesos
+* **Seguridad**: La que menos podemos ganarantizar.
+  
+  * **Disponibilidad**: La red este disponible en todo momento (y que no este lenta)
+  
+  * **Integridad**: Capacidad de aceptar o rechazar un mensaje
+  
+    * Capacidad de que el mensaje no se modificado
+  
+  * **Confidencialidad**: SOlo debe ser entendido por el destinatario
+    
     * Cifrado simétrico (fácil de romper)
+    
     * Cifrado asimétrico (llaves públicas y privadas)
-  * Autentificación: Demostrar quien dice ser (por lo general se sabe, lo que se tiene, por lo que es)
-  * Autorización: Lo que tiene permitido hacer
+    
+      ![](assets/cifasim.png)
+    
+      * Envio mensajes con la llave pública del destinatario
+      * Con su llave privada lee el mensaje
+    
+  * **Autentificación**: Demostrar quien dice ser (por lo general se sabe [contraseña], lo que se tiene [LLaves de la casa], por lo que es [Huella dactilar])
+  
+  * **Autorización**: Lo que tiene permitido hacer
 
 **(Clase 2)**
 
@@ -83,16 +97,13 @@ El modo "sudo" es el *configuración global*.
 * Vía cable consola
   * Vía programas 
     * Putty
-    * Teratermin
+    * Teraterm
     * Hyperterminal
     * Minicom (Linux)
 * Vía remota
 * Cable Auxiliar 
 
 **Iniciando ...**
-
-> TODO: Agregar imágenes
->
 
 Una vez conectada nuestra computadora al switch  damos doble click a la computadora y después en *desktop* y por último terminal y damos "ok".
 
@@ -269,6 +280,7 @@ Es un modelo de referencia
 1. **Capa física**
 
    * Cable ethernet o serial
+   * Bits
 
 2. **Enlace de datos**
 

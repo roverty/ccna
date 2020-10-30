@@ -2,21 +2,11 @@
 
 ## Módulo 1
 
-> TODO:
->
-> * [x] [PROGRESS] Cheatsheet de comandos básicos para router y switch
->
-> * [ ] [PENDIENT] Resumen de la currícula
->
-> * [ ] [PENDIENT] Resumen del contenido de los vídeos
->
-> *Esta card se eliminará cuando se concluyan todas las tareas*
-
 ### Cheatsheet
 
 **Nomenclatura**
 
-* M-N: Modo normal
+* M-N: Modo usuario
 * M-P: Modo privilegiado
 * M-CG: Modo configuración global
 
@@ -200,3 +190,71 @@ show ip dhcp pool
 show cdp neighbors
 ```
 
+### Lista de conceptos
+
+1. Red de datos
+   1. LAN
+   2. WAN
+2. Internet
+   1. Extranet
+   2. Intranet
+3. Arquitectura de una red
+4. Modelo OSI
+5. Modelo TCP/IP
+6. CSMA / CD
+7. Hub vs Switch
+8. Half duplex
+9. Full duplex
+10. Colisión
+11. Dominio de colisión
+12. Dominio broadcast
+13. Suite de protocolos
+14. Stack de protocolos
+15. Tipos de mensaje
+16. FastEthernet
+17. GigabitEthernet
+18. Cables
+19. ARP
+20. ICMP
+21. Admin de dispostivios CISCO
+22. Servidor
+23. Cliente
+24. Arquitectura entre pares
+25. Socket
+26. IPV4
+27. IP de clase
+28. IPs privadas
+29. VLSM
+30. IPv6
+31. Tiposd de direcciones ipv6
+32. EUI - 64
+33. Sintetizar direcciones IPV6
+34. Tipos de enrutamiento
+35. RIP
+36. TCP
+37. Protocolos de TCP
+38. UDP
+39. Procolos UDP
+40. DHCP
+41. SMTP
+42. MUA
+43. MTA
+44. POP
+45. IMAP
+46. CDP
+47. LLDP
+
+### Topología para el feedback
+
+- [x] Colocar los hostname indicados a cada router y cada switch de la topología (0.83pts)
+- [x] Habilitar SSH y TELNET en todos los routers. (0.83pts)
+- [x] Habilitar telnet en todos los switches. (0.83pts)
+- [x] Configurar servidor de correo. (0.83pts)
+- [x] Configurar y cargar archivos al servidor FTP, descargar ese archivo en algún host. Especificar en cual se hizo esta prueba a la hora de enviar el entregable. (0.83pts)
+- [x] Entregar cálculos del VLSM. (0.83pts)
+- [x] Enrutar con RIPv2. (0.83pts)
+- [x] Configurar servidor web y DNS. (0.83pts)
+- [x] Configurar DHCP en routers de los segmentos A, B y D. (0.83pts)
+- [x] Telnet de S0 a cada uno de los switches (S1,S2,S3,S4,S5,S6). (0.83pts)
+- [x] SSH de R0 a todos los demás routers (R1,R2,R3). (0.83pts)
+- [x] Telnet de S1 a todos los routers. (0.83pts)

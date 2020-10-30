@@ -162,9 +162,9 @@ Es una tabla almacenada en la memoria del Switch que contiene:
 - Intefaz
 - Mac
 
-| INTERFAC | MAC         |
-| -------- | ----------- |
-| fa01/1   | AA:AA:AA:AA |
+| INTERFACE | MAC         |
+| --------- | ----------- |
+| fa01/1    | AA:AA:AA:AA |
 
 **Flujo del mensaje ARP**
 
@@ -239,7 +239,7 @@ arp -a
 
 Esta tabla muestra destinos, _ip_'s y _mac_'s
 
-### Arquitectuas
+### Arquitecturas
 
 Recordando que tenemos tres formas de admin. un equipo CISCO
 
