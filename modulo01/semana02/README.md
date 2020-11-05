@@ -96,8 +96,6 @@ Abarca todo el segmento de red que ocupas
 - Multicast: Uno a un grupo, por ejemplo, separación por grupos de trabajo (brigadas).
 - Broadcast: Todos los dispositivos.
 
-> DUDA: ¿Y el anycast?
-
 ### Velocidad de los puertos
 
 - Fastethernet = 100 M/bs
@@ -109,7 +107,7 @@ Abarca todo el segmento de red que ocupas
 
   Para routers o switches a un equipo final (usuamente para configurarlo o administrarlo)
 
-  Generalmente se ocupa cuando el router o siwtch esta nuevo.
+  Generalmente se ocupa cuando el router o switch esta nuevo.
 
 - Cable directo (En packet tracer, negro con picos)
 
@@ -173,8 +171,6 @@ Por broadcast se envía a todos los host que esten conectados a switch, menos a 
 ![arp](README.assets/arp.png)
 
 Notése que a PC8 también le llegó el mensaje ARP pero lo rechazó porque no era el host objeto (lo se por sus direcciones IP)
-
-> DUDA: ARP lo envía el switch? También podría enviarlo un router? O lo envía en equipo?
 
 **Cómo el host PC6 y PC7 ya tienen sus direcciones MAC en la tabla MAC, simplemente se envían mensaje de manera directa**
 
@@ -312,8 +308,6 @@ no shutdown
 - La información viaja cifrada
 
 ![ssh](README.assets/ssh.png)
-
-> DUDA: ¿Por qué no se prefiere configurar el Switch con ssh?
 
 1. Configuración
 

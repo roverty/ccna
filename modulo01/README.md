@@ -53,6 +53,9 @@ login local
 ###################################################
 #	 		SSH configuracion			
 ###################################################
+# Previamente se debe configurar el hostname
+# y un usuario de OS
+# y una ip
 ip domain name <NOMBRE>
 crypto key generate rsa
 ip ssh authentification-retries 2
@@ -226,23 +229,26 @@ show cdp neighbors
 28. IPs privadas
 29. VLSM
 30. IPv6
-31. Tiposd de direcciones ipv6
+31. Tiposs de direcciones ipv6
 32. EUI - 64
 33. Sintetizar direcciones IPV6
 34. Tipos de enrutamiento
-35. RIP
-36. TCP
-37. Protocolos de TCP
-38. UDP
-39. Procolos UDP
-40. DHCP
-41. SMTP
-42. MUA
-43. MTA
-44. POP
-45. IMAP
-46. CDP
-47. LLDP
+35. Red conectada directamente
+36. Redes remotas
+37. RIP
+38. Defult Gateway
+39. TCP
+40. Protocolos de TCP
+41. UDP
+42. Procolos UDP
+43. DHCP
+44. SMTP
+45. MUA
+46. MTA
+47. POP
+48. IMAP
+49. CDP
+50. LLDP
 
 ### Topología para el feedback
 

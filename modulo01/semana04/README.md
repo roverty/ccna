@@ -157,7 +157,7 @@ conf t
 ip dhcp pool RODRIGO
 network 192.168.1.0 255.255.255.0
 default-router 192.168.1.254
-# dns-serer <IP> 
+# dns-server <IP> 
 # Todavía no tenemos dns
 
 # Se recomienda excluir las IPs estáticas que ya tengamos asignadas
@@ -238,7 +238,9 @@ HTTPS (puerto 443)
 (Simple Main Transfer Protocol)
 
 * MUA (Message User Agent)
-* MUA (Message Transfer Agent)
+  * Bandeja de entrada
+* MTA (Message Transfer Agent)
+  * Los servidores
 
 Mensajes de respuesta
 
@@ -251,7 +253,7 @@ Mensajes de respuesta
 
    ![image-20201018195656334](README.assets/step8.png)
 
-   2. Configurar un nombre de dominio (no olvidar presionar el botón de set) y confgiurar 3 usuarios
+   2. Configurar un nombre de dominio (no olvidar presionar el botón de set) y configurar 3 usuarios
 
       ![](README.assets/step9.png)
 
@@ -284,7 +286,7 @@ Mensajes de respuesta
 * Para conectarse
   * ftp <ip>
 
-1. Colocar servidor y configurarlo como se muestra (dejar el usuario por defecto
+1. Colocar servidor y configurarlo como se muestra (dejar el usuario por defecto)
 
    ![](README.assets/step12.png)
 
