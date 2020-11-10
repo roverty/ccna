@@ -21,3 +21,4 @@ packettracer v7.3
 
 * https://www.ccna6.com/category/ccna-1-v7-0/
 * https://www.pressexam.com/ccna1-v7-0/
+* https://itexamanswers.net/ccna-2-v7-exam-answers-switching-routing-and-wireless-essentials-v7-0-srwe.html
