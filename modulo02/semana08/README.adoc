@@ -1,0 +1,212 @@
+= Semana 08
+Creado por Rodrigo Francisco <rhodfra@gmail.com>
+Version 1.0, 10.11.2020
+:description: Semana 08 del curso de CCNA
+:keywords: cnna, switching, stp, spanning tree protocol  
+:sectnums: 
+// Configuracion de la tabla de contenidos
+:toc: 
+:toc-placement!:
+:toclevels: 4                                          
+:toc-title: Contenido
+
+// Ruta base de las imagenes
+:imagesdir: ./README.assets/ 
+
+// Resaltar sintaxis
+:source-highlighter: pygments
+
+// Iconos para entorno local
+ifndef::env-github[:icons: font]
+
+// Iconos para entorno github
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Semana 08 del curso de Cisco CNNA
+
+toc::[]
+
+== STP
+
+Spanning tree protocol o protocolo de árbol de expansión.
+
+Nos ayuda a evitar bucles en nuestra red.
+
+_¿Cómo lo hace?_
+
+* Mediante la elección de un switch raíz.
+* Para ello utilizamos el STA (Algoritmo para el STP)
+
+En realidad, cuando los switches están en color ambar no es que este "cargado"
+si no que en realidad se esta realizando el proceso de STP
+
+image::switches.png[]
+
+_¿Cómo sucede?_
+
+* Los switches van a negociar para saber cuál es switch raíz y ver si hay bucles
+
+_¿Qué problemas soluciona STP?_
+
+* La tormenta *broadcast* + 
+  Se produce un bucle infinito
+
+TIP: Ver la currícula (5.1.6)
+
+image::tormenta.png[]
+
+Con el algoritmo de STP, en caso de que haya bucle uno de los enlaces se
+deshabilita momentáneamente.
+
+STP viene habilitado por defecto, siempre.
+
+image::stp1.png[]
+
+En la negociación los switche se mandan *BPU* 's
+
+* Se envían cada dos segundos
+* Viene la prioridad de cada switch
+* También la vlan que interactua
+
+=== Proceso para elegir el Switch raíz
+
+Una vez que se decide el SR el STA comienza el proceso para 
+determinar la mejor ruta hacia el switch raíz.
+
+. BID (Bridge identifier) +
+  .. Es un valor el cuál se calcula mediante la suma de:
+    * num de vlan = 1 + 
+    * Prioridad de switch : 32768 (Prioridad por defecto, se puede modificar) + 
+    * Por lo tanto, el *BID* = 32769
+  .. En la tolopología de los 3 switches, hay un [underline]#empate# +
+     _¿Qué hacemos para desempatar?_ +
+     Debemos irnos al segundo método de desempate (vía MAC)
+. MAC 
+  .. El switch raíz es aquel que tenga la MAC más baja.
+
+==== Estados del puerto
+
+Son mientras se realiza el proceso STP
+
+* Forwarding
+* Learning
+* Listening (Solo recibe actualización)
+* Blocking (Recibe pero no envía)
+* Disable
+    
+==== Roles de puerto
+
+* Designado
+    ** Para un switch raíz siempre serán designados
+* Raíz
+* Alterno
+        
+=== RSTP (Rapid Spanning Tree Protocol)
+
+* Compatible con 802.1d
+* Define nuevos roles de puerto
+* Puertos para más rápida convergencia (blocking y listening)
+* Estado de puerto cuando RSTP ha hecho convergencia (Discarding y Fowarding)
+
+=== MSTP (Multiple Spanning Tree Protocol)
+
+* Protcolo que pasa por otros STP
+* Se ve más a fondo en CCNP
+
+=== PVST (PerVLAN Spanning Tree)
+
+* Por cada VLan que tengamos habrán un STP diferente
+* El BID será siempre 32768
+
+=== Comandos para STP
+
+[source,sh]
+----
+spanning-tree vlan X root primary
+spanning-tree vlan X root secondary
+spanning-tree cost
+spanning-tree portfat
+spanning-tree portfat bpduguard enable
+----
+
+== Ejercicios de STP
+
+=== Ejercicio 1
+
+image::stp-ej01a.png[]
+
+Color verde:: Configuración en modo raíz
+Color ámbar:: Configuración en modo alterno 
+//Color verd:: Configuración en modo designado 
+
+* La prioridad es la que viene por defecto (32768)
+* La VLAN es la que esta por defecto (vlan 1)
+* El BID para los 3 switches es 32769
+
+====
+
+. *Indicar el switch raíz*
+. *Definir el rol de cada puerto para cada switch*
+
+====
+
+* Utilizaremos el método de la *MAC* (La MAC más baja)
+* Notar que sí existe un bucle
+
+//-
+
+. Se elige el Switch 0 
++
+image::stp-ej01b.png[]
+
+. Los puertos de switch raíz siempre se configuran como 
+_designados_
++
+image::stp-ej01c.png[]
+
+. Los que vaya conectado al puerto designado del otro lado 
+será puerto _raíz_ 
++
+image::stp-ej01d.png[]
+
+. Para el enlace faltante:
+    .. Debemos ubicar la switch con la MAC más baja, en este
+    caso, BB:BB (Switch 1)
+    .. El switch 1 tendrá puerto _designado_
+    .. No podemos tener otro puerto _raiz_ en Switch 2
+    ... De nuevo habría bucles
+    .. Podemos tener un puerto _alterno_ (Estará en colo ámbar)
+    ... También se debe a que no podemos poner designado con
+    desgnado  
++
+image::stp-ej01e.png[]
+ 
+. El resultado final, en packet tracer es así 
++
+image::stp-ej01e.png[]
+
+=== Ejercicio 2
+
+image::stp-ej02a.png[]
+
+. El switch 2 debe ser el switch raíz, tiene el BID más 
+bajo, los puertos de este swtich deberán estar en modo desgnado.
++ 
+image::stp-ej02b.png[]
+
+. Los puertos a los que llegan las conexiones de switch 
+raíz debe estar en modo raíz
++ 
+image::stp-ej02c.png[]
+
+. Finalmente, para configurar los últimos puertos vemos 
+quién tiene la MAC más baja, el cuál será puerto desgnado
+y el último puerto que falta por configurar será puerto alterno.
++ 
+image::stp-ej02d.png[]
