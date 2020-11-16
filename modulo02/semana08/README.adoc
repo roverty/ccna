@@ -210,3 +210,356 @@ quién tiene la MAC más baja, el cuál será puerto desgnado
 y el último puerto que falta por configurar será puerto alterno.
 + 
 image::stp-ej02d.png[]
+
+== Práctica STP
+
+Utilizaremos la siguiente tolopología
+
+[NOTE]
+====
+Puede que nos salga diferente switch raíz
+====
+
+image::prac_top.png[]
+
+[source,sh]
+----
+# Nos muestra el stp configurado en cada vlan
+show spanning-tree
+----
+
+image::prac02.png[]
+
+* Nos dice la dirección MAC del switch raíz
+* El costo indica un valor para alcanzar al switch raíz
+** Su valor es por conexión de interfaces
+*** Por ejemplo, de Switch 1 a Switch 2 es 19 (No se suman)
+* El puerto indica hacia donde esta el switch raíz
+* *Hello time* indica cada cuanto se manda mensajes para verificar conexión  
+* Nos muestra una ventada que nos muestra el papel que estan jugando los puertos
+** Los más important de verificar es la intefaz, el costo y rol
+* Bridge ID se refiere a la información del Switch al que le hicimos el comando
+
+Otro comando para desplegar información es
+
+[source,sh]
+----
+# Nos muestra el stp configurado en cada vlan
+show spanning-tree vlan 1
+----
+
+Si tiramos el comando en el switch raíz encontramos lo siguiente:
+
+image::prac03.png[]
+
+_¿Cómo puedo saber quién es el switch raíz?_
+
+*Observar el _ROOT ID_*, ese es el switch raíz
+
+Observa que si ejecutamos 
+
+[source,sh]
+----
+show run
+----
+
+STP viene en modo pvst (Per Vlan Spanning tree)
+
+Para cambiar el modo podemos hacer lo siguiente
+
+[source,sh]
+----
+spanning-tree mode pvst
+----
+
+_Parte 1 ..._
+
+. Vamos a utiliza VLANs y se configurarán con STP
+.. Realizar la siguiente configuración 
++ 
+image::prac04.png[]
+
+.. A continuación se proporcionan los comandos
++
+[source,sh]
+----
+# S[0|1|2]
+vlan 100
+vlan 200
+exit
+
+interface range fa0/1-2
+switchport mode trunk
+----
+
+. Interesante notar que podemos avanzar el tiempo de simulador
++
+image::prac05.png[]
+
+. Veamos que los switches empezaron a negociar el proceso de STP
+.. Si mostramos el `show spanning-tree` veremos que sean configurado con STP
+las VLANs que hemos declarado.
+
+_Parte 2 ..._
+
+Obligaremos que 
+
+- el switch 2 sea el switch raíz para la vlan 100 
+- el switch 0 sea el switch raíz para la vlan 1
+- el switch 1 sea el switch raíz para la vlan 200
+
+image::prac06.png[]
+
+. Iniciemos por el switch 0
++ 
+[source,sh]
+----
+# S0
+# Se configura el switch raíz
+spanning-tree vlan 1 root primary
+# Se puede configurar el switch de respaldo en caso de que el raíz falle
+#spanning-tree vlan 1 root secondary 
+
+# S1
+spanning-tree vlan 100 root primary
+
+# S2
+spanning-tree vlan 200 root primary
+----
+
+. También podemos colocar un switch como raíz con el siguiente comando
++
+[source,sh]
+----
+# S1
+# spanning-tree vlan 200 priority ?
+# Modificar en incrementos de 4096
+# Cero es la prioridad menor
+spanning-tree vlan 200 priority 0
+----
+
+.. Notar que ningún puerto esta en color ambar
+.. Lo anterior se debe a que para diferentes vlans trabaja en diferentes modos
+verificar con `show spanning-tree`
+
+=== ¿Cómo funcionan los comandos para STP?
+
+Para realizar el calculo del BIP:
+
+* Para `spanning-tree vlan X root primary`
+
+** Resta 2 veces 4096
+** Y se le suma el número de la vlan
+
+Por ejemplo, para el switch 2 ::
++
+32 768 - 4096 - 4096 + 100 = 24 676
++ 
+image::prac07.png[]
+
+* Para `spanning-tree vlan X root secondary`
+
+** Resta 1 veces 4096
+** Y se le suma el número de la vlan
+
+
+* Para `spanning-tree vlan X priority Y`
+
+** La prioridad que dimos fue 0 
+** Y se le suma el número de la vlan
+** _Verificar en Switch 1_
+
+=== Otros comandos
+
+* `spanning tree cost`
+** Cambios el costo cuando queremos que un switch siga un camino diferente
+* `spanning tree portfast`
+** Evita que se haga STP en una determinada interfaz
+** Pasa de un estado de _blocking_ a _fowarding_
+** Generalmente para impresoras, host, laptos, teléfonos
+*** Porque no se necesita buscar BPU's 
+** En Switch 1
++ 
+[source,sh]
+----
+interface fa0/3
+spanning-tree portfast
+----
+*** Conectar un host en el Switch 1 (Debemos ver color verde)
+*** Podemos tener una capa de seguridad para que a pesar de que se conecte un
+switch en un _porfast_ no pase nada.
+**** Nos notificará si algo anda mal
+// show logging
+*** El comando para activarlo es 
++ 
+[source,sh]
+----
+interface fa0/3
+spanning-tree portfast bpduguard enable
+----
+*** Observamos que ahora si ya se bloquean los puertos (se ven en color rojo)
+*** La interfaz donde se genera el error pasa a un estado `error-disable`
+**** Para solucionarlo debemos reiniciar el puerto (`shutdown` y `no shutdown`)
+// Recodar caso de conectar otro switch y caer en un error :(
+
+== Etherchannel  
+
+El propósito original de etherchannel es aumentar la velocidad en los enlaces
+agregados entre switches.
+
+* Las intefaces se fusionan como si fueran una sola
+
+Los enlaces se pueden formar por una negociación con uno de dos protocolos:
+PAgP o LACP
+
+* PAgP es un protoco de CISCO y LACP es general
+* Los dispositivos CISCO soportan ambos
+
+En etherchannel es obligatorio que todos los puertos tenga la misma velocidad,
+la misma configuracion de duplex y la misma información de VLAN.
+
+En un switch se pueden tener hasta 6 etherchannel como máximo de 8 interfaces 
+asociadas
+
+Se ocupa en ::
+
+Servidores web con mucha carga +
+Servidores con mucha carga de video o streaming
+
+Es un protocolo de switching
+
+image::ether01b.png[]
+
+* El circulo representa las conexiones etherchannel
+* 2 interfaces físicas se combinan para formar una sola interfaz (lógica)
+* Es importante saber como que intefaces estamos trabajando 
+* Las interfaces deben tener la misma velocidad
+** Si son diferentes no se suman las velocidades
+** En este ejemplo aquí tenemos 300 mb/s
+
+* Se hace una negociación entre switches con las siguientes combinaciones
++
+image::ether02.png[]
++
+image::ether03.png[]
+
+
+[source,sh]
+----
+# S[0|1]
+# Empezamos por crear las vlans
+vlan 10
+vlan 20
+
+# Se recomienda que esten juntas las interfaces
+# También se recomienda que sean las mimas
+#inteface range fa0/X-Y
+inteface range fa0/0-3
+# channel-group X mode yyyy
+channel-group 1 mode desirable
+# En S1 colocar auto
+# channel-group 1 mode auto
+exit
+
+# inteface port-channel X
+inteface port-channel 1
+switchport mode trunk
+#switchport trunk allow vlan ...
+switchport trunk allow vlan 10, 20
+
+# Verificar que todos los leds se vean en color verde
+
+show etherchannel summary
+----
+
+`sh ip interface brief` mostrará que se configuro un port-channel
+// Se le puede dar ip al port-channel
+
+Otro comando útil: `sh etherchannel port-channel`
+
+== DTP (Dynamic Trunk Protocol)
+
+Es una tecnología de CISCO
+
+Se busca automatizar la creación de los enlaces en modo acceso y truncal
+
+Interctua en capa 2
+
+Nos vamos a apoyar de la siguiente tabla:
+
+image::dtp.png[]
+
+Para probar los siguientes modos utilizaremos la configuración más sencilla
+
+image::dtp01.png[]
+
+. Del lado izquierdo configurar en modo `dynamic desirable` +
+Utilizar `switchport mode xxxx`
+. Del lado derecho configurar en modo `dynamic auto`
+. La combinación debe dar un enlace de tipo truncal +
+Verificar con `show interfaces trunk`
+
+== Violación de puertos
+
+// En el modelo jerárquico teniamos la capa de acceso. 
+
+Esto nos permite indicar que dispositivos se pueden conectar mis puertos 
+físicos. Para ello utilizamos la MAC del dispositivo.
+
+Tenemos 3 tipos:
+
+* RESTRICT (bloquea y avisa)
+** Nos avisa en un servidor llamado syslog
+* SHUTDOWN (error disable)
+** Muy parecido a BPDU
+* PROTECT (bloquea y no avisa)
+** Se bloquea pero no genera reporte en la bitácora
+
+La configuración por default se puede revisar con
+
+[source,sh]
+----
+sh port-security interface fa0/2
+----
+
+* La configuración por defecto es `shutdown`
+* Sticky es que las aprenda de manera automática, sin necesidad de teclearlas
+** Es mejor configurarlo de manera manual 
+
+Para entender mejor los conceptos realizaremos la siguiente configuración:
+
+image::vdp01.png[]
+
+. No olvidar configurar una ip para la vlan 1 (192.168.1.254)
+. Y una ip para el host (192.168.1.1)
+. En el switch hacemos la configuración para activar la violación de puertos
++
+[source,sh]
+----
+interface fa0/2
+shutdown
+
+switchport mode access
+switchport port-security
+
+switchport port-security maximum 1
+switchport port-security mac-address <direccion>
+switchport port-security violation shutdown
+
+no shutdown
+
+# Extra
+spanning-tree portfast
+----
+
+. Verificar con otro host (intruso)
+.. Debemos esperar a que haya tráfico (envio de información, puede ser un ping)
+
+. Para salir del error de disable debemos reiniciar la interfaz
+
+Un comando útil es `show port-security interface fa0/2`
+
+* En un equipo físico si se crea un violación se muestra la MAC intrusa
+
+La configuración _sticky_ no es recomendable debido a que al reiniciar la 
+interfaz el intruso podría conectarse.
