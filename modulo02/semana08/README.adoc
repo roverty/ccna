@@ -131,8 +131,8 @@ Son mientras se realiza el proceso STP
 spanning-tree vlan X root primary
 spanning-tree vlan X root secondary
 spanning-tree cost
-spanning-tree portfat
-spanning-tree portfat bpduguard enable
+spanning-tree portfast
+spanning-tree bpduguard enable
 ----
 
 == Ejercicios de STP
