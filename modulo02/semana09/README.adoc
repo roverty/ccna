@@ -1,0 +1,281 @@
+= Semana 09
+Creado por Rodrigo Francisco <rhodfra@gmail.com>
+Version 1.0, 10.11.2020
+:description: Semana 09 del curso de CCNA
+:keywords: cnna,estatico
+:sectnums: 
+// Configuracion de la tabla de contenidos
+:toc: 
+:toc-placement!:
+:toclevels: 4                                          
+:toc-title: Contenido
+
+// Ruta base de las imagenes
+:imagesdir: ./README.assets/ 
+
+// Resaltar sintaxis
+:source-highlighter: pygments
+
+// Iconos para entorno local
+ifndef::env-github[:icons: font]
+
+// Iconos para entorno github
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Semana 09 del curso de Cisco CNNA
+
+toc::[]
+
+
+== Enrutamiento estático
+
+Es el primer protocol de enrutamiento que se enseña.
+
+Se anuncian [underline]#los segmentos de red que se quieren conocer.#
+
+[CAUTION]
+====
+Recordenmos que hay dos tipos de enrutamiento
+
+* Estático
+* Dinámico
+====
+[IMPORTANT]
+====
+Vimos que en caso de rip se anuncian los segmentos que se tiene
+conectados directamiente.
+====
+
+* Distancia administrativa : 1
+* Métrica: No hay
+
+Para configurar este tipo de enrutamiento tenemos el siguiente
+comando
+
+[source,sh]
+----
+ip route [segmento de red] [másrca de red] 
+[IP siguiente salto / [ interfaz local] [DA] #<1> 
+----
+<1> DA: Distancia administrativa. Yo la puedo modificar, con
+el fin de tener varias opciones para llegar a otra red.
+
+=== Ruta estática por defecto
+
+[source,sh]
+----
+ip route 0.0.0.0.0.0.0.0 next-hop
+----
+
+[source,sh]
+----
+router rip
+default-information originate #<1>
+----
+<1> Las rutas estáticas por defecto se utilizan generalmente 
+para tener una salida al exterior. Para no estar enrutando 
+todo podemos poner este comando y se progagará.
+
+== Práctica de enrutamiento estático
+
+=== Topología 1
+
+image::top01.png[]
+
+Notar que el salto de R1 para llegar 192.168.3.0 tiene que
+ser la ip de la interfaz que me permite llegar a mi destino.
+
+image::top01-salto.png[]
+
+[source,sh]
+----
+# R1
+en
+conf t
+hostname R1
+
+ip route 192.168.3.0 255.255.255.0 192.168.1.2
+
+# R2
+en 
+conf t
+hostname R2
+ip route 192.168.2.0 255.255.255.0 192.168.1.1
+----
+
+[source,sh]
+----
+show ip route
+----
+
+image::top01-route.png[]
+
+Para finalizar mandar un ping
+
+=== Topología 2
+
+image::top02.png[]
+
+[source,sh]
+----
+hostname R3
+
+ip route 192.168.3.0 255.255.255.0 seial 0/0/0 #<1>
+----
+<1> Enrutamiento por interfaz local
+
+.Verificar
+* La tabla de enrutamiento
+* El ping entre hosts
+
+image::top02-route1.png[]
+
+Observar que la diferencia entre declarar la interfaz local 
+o la ip de salto es que en la interfaz local no nos marcará
+la *distancia administrativa*.
+[NOTE]
+====
+A utiliza _interfaz local_ se espera que las redes conectadas
+sean del mismo segmento. Sin embargo, esto no siempre es así
+si de por medio hay un switch, ver el siguiente ejemplo.
+
+image::top03.png[]
+====
+
+=== Modificar distancia administrativa
+
+image::top04.png[]
+
+[source,sh]
+----
+# R5
+ip router 192.168.3.0 255.255.255.0 192.168.2.2 150 #<1>
+
+ip router 192.168.4.0 255.255.255.0 192.168.2.2 150
+
+# R6
+hos R6
+
+ip router 192.168.1.0 255.255.255.0 192.168.2.1 150
+ip router 192.168.4.0 255.255.255.0 192.168.3.1 150
+
+# R7
+ip router 192.168.2.0 255.255.255.0 192.168.3.2 150
+ip router 192.168.1.0 255.255.255.0 192.168.3.2 150
+
+----
+<1> El último parametro es la distancia administrativa
+
+image::top04-route.png[]
+ 
+Podemos hacer redundancia y cambiar la distancia 
+administrativa, vemos el siguiente ejemplo
+
+image::top04-02.png[]
+
+En la simulación podemos ver que al ruta que se sigue es
+R5 -> R6 -> R7
+
+Para modificar la _distancia administrativa_ y que tome el 
+camino de abajo.
+
+[source,sh]
+----
+# R5
+
+sh run
+# Veremos las rutas estáticas
+
+ip router 192.168.6.0 255.255.255.0 192.168.5.1
+ip router 192.168.4.0 255.255.255.0 192.168.5.1
+
+
+# R8
+
+ip router 192.168.1.0 255.255.255.0 192.168.5.2
+ip router 192.168.4.0 255.255.255.0 192.168.6.2
+
+# R7
+
+ip router 192.168.1.0 255.255.255.0 192.168.6.1
+ip router 192.168.5.0 255.255.255.0 192.168.6.1
+
+show ip route
+----
+
+== Rutá estática por defecto
+
+Se anuncian los segmentos de red que sequieren conocer 
+
+* Distancia administrativa = 1
+* Métrica: no hay
+
+[source,sh]
+----
+ip route 0.0.0.0.0.0.0.0 next-hop
+----
+
+[source,sh]
+----
+router rip
+default-information originate 
+----
+
+image::top05-02.png[]
+
+**Para hacer la nube** ::
+A partir de un servidor DNS-WEB 
++ 
+Lo enmcarcamos y damos click create cluster
++
+image::nube.png[]
+
+La ruta estática únicamente se coloca en el router que nos
+hace llegar al ISP
+
+[source,sh]
+----
+# R9
+router rip
+network 192.168.1.0
+# El 2.0 no porque nunca se enruta internet!!!
+
+exit
+
+ip route 0.0.0.0.0.0.0.0 192.168.2.1 #<1>
+----
+<1> Los 8 ceros significan todos los segmentos de red
+con todas las máscaras de red.
+
+_¿Cómo puedo hacer el host que no conoce por RIP el segmento 2.0?_
+
+[source,]
+----
+# R9
+router rip
+default-information originate #<1>
+
+end
+
+hostname R9
+
+show ip route
+----
+<1> Propagamos nuestros datos a la ruta estática, en este 
+caso el destino es internet.
+
+En la tabla de enrutamiento de *R9* podemos ver la ruta estática
+(tiene el asterisco)
+
+image::ruta-estat.png[]
+
+En cambio, en otro router aparecería que se aprendido 
+la ruta, sin embargo, aparece una R con asterisco (R*)
+
+image::ruta-estat2.png[]
