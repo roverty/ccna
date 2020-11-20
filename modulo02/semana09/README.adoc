@@ -279,3 +279,268 @@ En cambio, en otro router aparecería que se aprendido
 la ruta, sin embargo, aparece una R con asterisco (R*)
 
 image::ruta-estat2.png[]
+
+
+== HSRP
+
+FHRP nos va a ayudar a cubrir una parte importante de la 
+[underline]#tolerancia a fallos.#
+
+First Hop Redundancy Protocol ::
+FHRP [underline]#anunca una dirección **IP virtual**# para facilitar la 
+conmutación por error transparente de un dispostivo de enrutamiento 
+CISCO.
+
+Hot Standby Router Protocol ::
+HSRP. Es una implementación patentada de FHRP por parte CISCO.
+
+.Necesitamos
+* Un router _Activo_ (El que queda como principal)
+* Un router o más en _Standby_
+
+_La elección del proceso se da por medio de la prioridad._
+
+En versión 2 de HSRP acepta un gran numero de grupos.
+
+PREMPT:: 
+Comando de configuración que puede aplicar a un enrutador 
+hsrp para que se convierta en su interfaz local.
+
+HSRP soporta hasta  255 grupos por interfaz, [underline]#permitiendo una 
+forma administrativa de equilibrio de carga.#
+
+La dirección IP virtual y la dirección MAC virtual están activas en el enrutador maestro HSRP.
+
+Al crear una IP virutal se crea una dirección MAC virtual
+
+La comunicación de lo router se da cada 
+**3 seg de hello**, por **10 seg de dead**.
+Para verificar si se tiene la comunicación.
+
+== Práctica HSRP
+
+Trabajaremos con la siguiente topología
+
+image::top-hsrp.png[]
+
+._¿Qué pasa si Si falla la interfaz de R1?_
+* El host PC0 tiene la dirección de gateaway de R1, por lo tanto
+ya no se podría comunicar el servidor DNS.
+* Se puede cambiar de manera manual la configuración de PC0 de la
+dirección de gateway. _Estar cambiando la dirección de gateway a 
+cada rato resulta poco práctico_
+
+_¿Cómo se soluciona lo anterior?_ Por medio de una *IP virtual*
+
+Configuracion de la interfaz
+
+[source,sh]
+----
+# R1
+
+interface fa0/0
+
+standby 10 ip 192.168.1.1 #<1> 
+standby 10 priority 110 # <2>
+standby 10 preempt #<3>
+
+# R2 
+
+interface fa0/0
+
+standby 10 ip 192.168.1.1
+standby 10 priority 105
+----
+<1> El 10 representa el grupo que se eligió. El rango es 1-4095
+<2> El 110 representa la prioridad, el router con la prioridad mayor
+será designado *switch activo*.
+<3> Solo va colocado en el router activo. Si el router activo se 
+cae, pero al poco rato se recupera, el preempt sirve para el tráfico
+se se vaya por el switch configurado como activo.
+
+Algunos comandos útiles para revisar el status de la configuración
+
+[source,]
+----
+show standby        
+----
+
+image::standby.png[]
+
+[source,]
+----
+show standby brief  
+----
+
+image::standby2.png[]
+
+No olvidar configurar los host con la ip virtual de gateway
+
+En los host podemos ver la ruta del mensaje
+
+```sh
+tracert 192.168.2.100
+
+# Es posible mandar ping a la ip virtual 
+ping 192.168.1.1 
+```
+image::tracert.png[]
+
+También aumentaos la seguridad porque solo se cae la dirección ip
+virtual
+
+== DHCP
+
+* **D**iscover
+* **O**ffer
+* **R**equest
+* **A**ck
+
+Para redes LAN, un router puede hacer una solicitud al DHCP.
+
+Para ejemplificar lo anterior utilizaremos la siguiente 
+topología.
+
+image::dhcp01.png[]
+
+Las configuraciones se pueden realizar por medio de la interfaz
+gráfica.
+
+[source,sh]
+----
+# R4
+
+# Creando un pool
+ip dhcp pool CISCO
+network 192.168.1.0 255.255.255.0
+
+# R5
+interface gi0/0/0
+no shutdown
+ip address dhcp
+
+# R4
+
+show ip dhcp binding
+----
+
+Corroborar mandando ping.
+
+**_¿Qué pasa si intentamos el mismo proceso con una interfaz 
+serial?_**
+
+image::dhcp02.png[]
+
+.No olvidar
+* Poner dirección IP al router que funcione como servidor dhcp 
+
+[source,sh]
+----
+# R4
+
+# Creando un pool
+ip dhcp pool CISCO
+network 192.168.1.0 255.255.255.0
+
+# R5
+interface se0/0/0
+no shutdown
+
+# Siguiente comando falla
+ip address dhcp
+----
+
+[IMPORTANT]
+====
+Describir por que no se puede utilizar el comando dhcp es una interfaz serial.
+====
+
+=== DHCP IP helper
+
+DHCP IP helper Funciona cuando el DHCP no esta en el mismo segmento de red del host que solicita una dirección IP.
+
+image::dhcp03.png[]
+
+Primero hacemos la configuración de los pools como lo hemos 
+visto hasta ahora.
+
+[source,sh]
+----
+# R10
+hostname R10
+
+ip dhcp pool A
+network 192.168.4.0 255.255.255.0
+default-router 192.168.4.254
+
+# R8
+hostname R8
+
+ip dhcp pool B
+network 192.168.5.0 255.255.255.0
+default-router 192.168.5.254
+----
+
+PC2 siempre pensará que su servidor dhcp es el router que R8,
+sin embargo, lo que pasa es que se creará un doble socket
+como se muestra a continuación. 
+
+image::dhcp04.png[]
+
+Inicimientos por la LAN A (192.168.4.0)
+
+[source,sh]
+----
+# R8
+
+interface gi0/0/1
+ip helper-address 192.168.2.1 #<1>
+
+# R10
+
+interface gi0/0/1
+ip helper-address 192.168.1.1  #<1>
+
+----
+<1> Se elige la dirección IP de la interfaz más cercana 
+
+Probar la configuración en los hosts
+
+=== DHCP snooping
+
+Es una manera de tener más segura nuestra red.
+
+Con esta técnica le podemos decir a nuestros switches cuales son 
+las interfaces confiables donde  mandar solicitud para dhcp.
+
+image::dhcp05.png[]
+
+En la topología de arriba va a haber veces que por dhcp 
+obtendremos una ip de un segmento y otra veces obtendremos
+una ip de otro segmento. Esto no debería ser así, por ello 
+se debe implementar DHCP snooping.
+
+[source,]
+----
+# En el switch
+
+ip dhcp snooping
+
+ip dhcp snooping vlan number
+
+interface fa0/1
+
+ip dhcp snooping trust 
+
+# La interfaz del host también tiene que estar en trust
+interface fa0/3
+
+ip dhcp snooping trust 
+
+show ip dhcp snooping
+----
+
+image::dhcp06.png[]
+
+Probar aplicando dhcp para los distintos hosts
+
