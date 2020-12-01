@@ -70,7 +70,7 @@ el fin de tener varias opciones para llegar a otra red.
 
 [source,sh]
 ----
-ip route 0.0.0.0.0.0.0.0 next-hop
+ip route 0.0.0.0 0.0.0.0 next-hop
 ----
 
 [source,sh]
