@@ -1,0 +1,29 @@
+Evaluación
+
+Switch Raiz S1 -> (0.66pts)
+Switch Raiz S2 ->(0.66pts)
+PUERTOS EN PORFAST Y BPDU GUARD EN S2 Y S3 (COMPROBAR BPDU GUARD) -> (0.66pts)
+R2 ACTUANDO Y DANDO DHCP A VLAN 50 Y 30 -> (0.66pts)
+LACP arriba -> (0.66pts)
+PAGP arriba -> (0.66pts)
+HSRP (REDUNDANCIA) -> (0.66pts)
+VIOLACIÓN DE PUERTOS (COMPROBADO) -> (0.66pts)
+DHCP SNOOPING FUNCIONANDO -> (0.66pts)
+Host de la vlan 50, vlan 30 y PC8 salen a internet (www.google.com) -> (0.66pts)
+Host PC6 y PC7 llegan al servidor web y dns (www.lapuraverduradelcaldo.com) -> (0.66pts)
+Correos entre Pepe y Toño -> (0.66pts)
+Telnet de PC7 A S1 -> (0.66pts)
+Telnet de PC8 A S5 -> (0.66pts)
+SSH de vlan PC EN VLAN 50 A R3 -> (0.66pts)
+
+
+NOTA: CONTRASEÑA DE ENABLE:cisco123
+      USER: admin
+      PASS: admin
+Es libre El segmento de RED que quieran utilizar para el DHCP de R6 
+y el segmento de DHCP del router R7 (DHCP intruso)
+
+VLANS
+50 192.168.70.0
+30 192.168.71.0
+10 192.168.72.0
