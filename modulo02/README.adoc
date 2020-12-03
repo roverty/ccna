@@ -1,0 +1,275 @@
+= Módulo 02
+Creado por Rodrigo Francisco <rhodfra@gmail.com>
+Version 1.0, 10.11.2020
+:description: Semana 10 del curso de CCNA
+:keywords: cnna,cheatshet
+//:sectnums: 
+// Configuracion de la tabla de contenidos
+:toc: 
+:toc-placement!:
+:toclevels: 4                                          
+:toc-title: Contenido
+
+// Ruta base de las imagenes
+:imagesdir: ./README.assets/ 
+
+// Resaltar sintaxis
+:source-highlighter: pygments
+
+// Iconos para entorno local
+ifndef::env-github[:icons: font]
+
+// Iconos para entorno github
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Cheatshet módulo 02
+
+//toc::[]
+
+== comandos Show 
+
+[source,sh]
+----
+
+# ver vlans
+show vlan brief
+
+# Ver vlans en truncal
+show interfaces trunk
+
+# Para router on stick
+show ip interface brief
+
+# Mostrar STP configurado en vlans
+show spanning-tree
+show spanning-tree vlan 1
+
+# Mostrar configuración de etherchannel
+show etherchannel summary
+
+# Mostrar interfaces en etherchannel
+show etherchannel port-channel
+
+# Ver la configuración de violacion de puertos
+show port-security interface fa0/X
+
+# Ver configuracion de HRSP
+show standby
+show standby brief
+
+# Ver los pools configurados
+show ip dhcp binding
+
+# Ver configuracion de snooping
+show ip dhcp snooping
+----
+
+== Lista de conceptos
+
+. Modelo jerárquico
+. Switch de núcleo contraído
+. Vlan
+    .. Modo acceso
+    .. Modo truncal
+    .. Vlan nativa
+. Router on stick
+. Inter vlan routing
+. STP
+    .. BPU
+    .. BID
+    .. Estados de puerto
+    .. Roles de puerto
+    .. RSTP
+    .. MSTP
+    .. PVST
+. Etherchannel
+    .. PAgP
+    .. LACP
+. DTP
+. Violación de puertos
+. Enrutamiento estático
+    .. Ruta estática por defecto
+. HSRP
+    .. Prempt
+. FHRP
+. DHCP IP Helper
+. DHCP snooping
+
+== Cheatshet configuraciones
+
+[source,sh]
+----
+#########################################################
+#                       VLANS                           #
+#########################################################
+vlan X
+vlan Y
+exit
+no vlan X
+
+# Modo acceso / truncal
+# Las configuración de switchport se hacen sobre la interfaz
+interface fa0/X
+
+switchport mode access
+switchport access vlan Y
+
+# Modo truncal
+switchport mode trunk
+
+# Truncal nativo
+switchport mode trunk
+# El siguiente comando se debe ejecutar en ambos switches
+switchport trunk native vlan Y
+
+#########################################################
+#               Router on Stick                         #
+#########################################################
+
+interface gi0/0/0.X
+# Donde X es una vlan previamente configurada
+encapsulation dot1q X
+ip address <IP> <MASK>
+
+#
+# Si hay otras vlans se configura otra interfaz virtual
+# (gi0/0/0.Y)
+
+interface gi0/0/0
+no shutdown
+
+#########################################################
+#               Inter vlan routing                      #
+#########################################################
+
+interface vlan X
+ip address <IP> <MASK>
+no shutdown
+
+# La interfaz de switch capa 3 y switch capa 2 debe 
+# tener la siguiente configuración
+interface fa0/Y
+switchport trunk encapsulation dot1q
+switchport mode trunk
+exit
+
+ip routing
+
+# Cambiamos de la interfaz para trabajar con las 
+# configuraciones de router
+interface fa0/X
+no switchport
+ip address <IP> <MASK>
+
+#########################################################
+#                        STP                            #
+#########################################################
+
+spanning-tree mode pvst
+
+spanning-tree vlan X root primary
+# Equivalente
+spanning-tree valn X priority Y
+
+spanning-tree vlan X root secondary
+
+spanning-tree cost
+spanning-tree portfast
+# bpdu guard
+spanning-tree bpduguard enable
+
+#########################################################
+#                   Etherchannel                        #
+#########################################################
+
+# Previamente las vlans deben estar configuradas
+
+interface range fa0/X-Y
+channel-group Z mode desirable
+exit
+
+interface port-channel Z
+switchport mode trunk
+
+#########################################################
+#                         DTP                           #
+#########################################################
+
+interface fa0/X
+
+switchport mode [dynamic desirable|dynamic auto| trunk|access]
+
+#########################################################
+#               Violación de puertos                    #
+#########################################################
+
+interface fa0/X
+shutdown
+
+switchport mode access
+switchport port-security
+
+switchport port-security maximum N
+switchport port-security mac-address <MAC>
+switchport port-security violation shutdown
+
+no shutdown
+
+#########################################################
+#               Enrutamiento estático                   #
+#########################################################
+
+ip route <segmento de red> <MASK> <[IP-salto]|[interfaz]> [DA] 
+
+# Ruta estatica por defecto
+ip route 0.0.0.0 0.0.0.0 <IP-salto>
+router rip
+network 192.168.X.0
+
+#########################################################
+#                        HSRP                           #
+#########################################################
+
+# Switch activo
+interface fa0/X
+
+standby Y <IP-virtual>
+standby Y priority X
+standby Y preempt
+
+# Switch secundario
+interface fa0/Z
+
+standby Y <IP-virtual>
+standby Y priority W
+
+#########################################################
+#                   DHCP IP Helper                      #
+#########################################################
+
+interface gi0/0/0
+ip helper-address <IP-helper>
+
+#########################################################
+#                   IP DHCP snooping                    #
+#########################################################
+
+ip dhcp snooping
+
+ip dhcp snooping vlan X
+
+# Activar en la interfaz del dhcp real
+interface fa0/0
+ip dhcp snooping trust
+
+# Activar en la interfaz del host
+interface fa0/1
+ip dhcp snooping trust
+
+----
