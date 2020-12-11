@@ -1,0 +1,171 @@
+= Semana 11
+Creado por Rodrigo Francisco <rhodfra@gmail.com>
+Version 1.0, 10.11.2020
+:description: Semana 09 del curso de CCNA
+//:keywords: 
+:sectnums: 
+// Configuracion de la tabla de contenidos
+:toc: 
+:toc-placement!:
+:toclevels: 4                                          
+:toc-title: Contenido
+
+// Ruta base de las imagenes
+:imagesdir: ./README.assets/ 
+
+// Resaltar sintaxis
+:source-highlighter: pygments
+
+// Iconos para entorno local
+ifndef::env-github[:icons: font]
+
+// Iconos para entorno github
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Semana 11 del curso de Cisco CNNA
+
+toc::[]
+
+== DHCP IPv6
+
+image::dhcpv6.png[]
+
+Ojo::
+Recordar configurar las direcciones ip de las interfaces
+
+[source,sh]
+----
+ipv6 unicast-routing
+ipv6 dhcp pool cisco
+
+# Como no hay broadcast tenemos que habilitar lo sig.
+prefix-delegation pool cisco
+exit
+
+interface gi0/0/1
+ipv6 address 2001:db8:cafe:3::1/64
+no shutdown
+
+# Apartir de que segmento se empieza a repartir dirs ips
+# El 64 es el prefijo a asignarle a nuestros hosts
+ipv6 local pool cisco 2001:db8:cafe:3::1/64 64
+interface gi0/0/1
+# Habilitamos la interfaz como servidor dhcp
+ipv6 dhcp server cisco
+----
+
+== Enrutamiento estático para IPv6
+
+[source,sh]
+----
+#R1
+ipv6 route 2001:db8:cafe:2::/64 2001:db8:cafe:1::2
+
+#R2
+ipv6 route 2001:db8:cafe:3::/64 2001:db8:cafe:1::1
+
+show ipv6 route
+----
+
+== Respaldo de imagenes flash / OS
+
+Aprenderemos a::
+Eliminar el sistema operativo +
+Cargar el sistema de operativo +
+Recuperación de contraseñas 
+
+=== Algunos comandos útiles
+
+[source,sh]
+----
+# Ver versión y nombre de la flash
+show version
+
+#Vemos especificamente la imagen flash
+dir fash:
+
+# Para eliminar el sistema operativo
+delete flash:
+# Nos pedirá el nombre de la flash que deseamos borrar
+
+#Al reinicio nos mostrará un prompt con
+# rommon 1>
+# Podemos teclear reset
+----
+
+=== Cargar sistema operativo de servidor tftp a un router
+
+Para ello configuramos en servidor tfp 
+
+image::tftp-router.png[]
+
+*Nota*: Se recomienda borrar los archivos del servidor tftp
+
+[source,]
+----
+# Copiar sistema operativo a servidor tftp
+# El espacio es importante
+copy flash: tftp:
+# No pedirá el nombre de la flash a respaldar
+----
+
+Ahora conectamos nuestro servidor al router que matamos
+
+image::tftp-router2.png[]
+
+Tenemos que dar ips flotantes (no estan asociadas a ninguna interfaz)
+
+[source,sh]
+----
+IP_ADDRESS=192.168.1.10         #IP flotante para router
+IP-SUBNET_MASK=255.255.255.0
+DEFAULT_GATEWAY=192.168.1.254
+TFTP_SERVER=192.168.1.1
+TFTP_FILE=archivo.bin
+tftpdnld
+# Nos mandará un mensaje de confirmación, presionar y
+reset
+----
+
+
+=== Cisco password recovery
+
+El resgistro princial es 0x2102
+
+Un router tiene varios registros, uno para cada configuración que quiera ocupar.
+
+[source,]
+----
+# Entrar a modo rommon
+# Debemos reiniciar, con botonazo
+# Antes de que acabe de encender presiono
+Ctrl + c
+
+confreg 0x2142
+reset 
+
+show version
+copy startup-config running-config
+# Pasar a conf global
+enable pass cisco123
+conf-register 0x2102
+exit
+wr
+reload
+----
+
+
+
+
+
+
+
+
+
+
