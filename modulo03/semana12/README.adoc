@@ -48,18 +48,22 @@ D.A. = 110
 El se saca como ::
 costo = Ancho de banda de referencia (10^8)/Ancho de banca de la interfaz.
 
-Tiempo de adyacencia: Tiempo que tardan los routers en saludarse.
+Tiempo de adyacencia: Tiempo que tardan los routers en saludarse.(Tiempo de
+hello)
 
-Tiempo de divergencia: Tiempo e nque los routers comparten sus tablas de enrutamiento.
+Tiempo de divergencia: Tiempo e nque los routers comparten sus tablas de 
+enrutamiento.
 
 .Network type
 * *Broadcast* (hello=10seg dead=40seg) -> prioridad = 1
 * *Point to point* (hello=10seg dead=40seg) -> prioridad = 0
-* *NonBroadcast* -> No se hablará de él en el curso (era cual el frame relay existía)
+* *NonBroadcast* -> No se hablará de él en el curso (era cual el frame relay
+* existía)
 
 Prioridad :: 
 2 o más = Siempre es designado (DR) +
-1 = Contienda (Router ID) -> Negociación para ver quien va a ser el router DR y de BDR +
+1 = Contienda (Router ID) -> Negociación para ver quien va a ser el router DR y
+de BDR + 
 0 = No hay designado (DR) ni Backup (BDR)
 
 Para cambiar la prioridad 
@@ -70,14 +74,15 @@ interface fa0/0
 ip ospf priority X
 ----
 
-OSPF se maneja por medio de *áreas*, el área backbone o principal o el área 0. Nos permite tener un punto de partida.
+OSPF se maneja por medio de *áreas*, el área backbone o principal o el área 0.
+Nos permite tener un punto de partida.
 
 Los mensajes que se envían los routers se llaman LSA (link state advertisement)
 
 .Formas de elegir un DR
-. ROUTER-ID manual -> Se elige manualamente el router designado.
-. LOOPBACK -> Interfaces para prueba
-. IP en la interfaz 
+. ROUTER-ID manual -> Se configura manualmente, el más alto es el router
+designado.  . LOOPBACK -> Interfaces para prueba
+. IP en la interfaz  -> Se elige como designado al más alto
 
 [source,sql]
 ----
@@ -92,17 +97,20 @@ show ip ospf database # Comportamiento de cada uno de los routers
 
 Los LSA's describen el estado de una red o de un router.
 
-Esta descripción cubre el estado de todas las interfaces de los routers y sus adyacencias
+Esta descripción cubre el estado de todas las interfaces de los routers y sus
+adyacencias
 
 . Router Link State (Todos los routers del area)
 . Net Link State (DR)
 
-*DROthers (Aquellos que no son DR ni BDR) Solo envían su LSA al DR y el BDR mediante la dirección de multifusión 224.0.0.0*
+*DROthers (Aquellos que no son DR ni BDR) Solo envían su LSA al DR y el BDR
+mediante la dirección de multifusión 224.0.0.0*
 
 
 === Configuración
 
-Al ser un protocol dinámico, es muy sencillo, simplemente se anuncia los segmentos de red conocidos, similar a como se hace en RIP.
+Al ser un protocol dinámico, es muy sencillo, simplemente se anuncia los
+segmentos de red conocidos, similar a como se hace en RIP.
 
 Siempre se debe empezar desde el área 0.
 
@@ -112,6 +120,14 @@ En una interfaz way se da la comunicación point to point
 
 image::top01.png[]
 
+*Creación de una loopback*
+
+[source,sh]
+----
+interface loopback <num>
+ip address <IP>/<MASK>
+exit
+----
 
 [source,sh]
 ----
@@ -123,8 +139,8 @@ network 100.100.100.0 0.0.0.255 area 0
 # Router 1
 router ospf 1
 network 192.168.1.0 0.0.0.255 area 0 
-# Antes de terminar el router detectara la adyacencia y nos dirá que ya reconocio
-# el segmento
+# Antes de terminar el router detectara la adyacencia y nos dirá que ya
+# reconocio el segmento
 
 network 200.200.200.0 0.0.0.255 area 0
 
@@ -162,16 +178,16 @@ Para redes de tipo lan
 image::top02.png[]
 
 Todos los router tendrán el mismo segmento de red. Gracias al switch que 
-esta en medio va a hacer posible dar prioridad igual a 1. Por lo tanto los router se 
-van a encontrar en contienda para ver quein es el router designado y el router de 
-backup.
+esta en medio va a hacer posible dar prioridad igual a 1. Por lo tanto los
+router se van a encontrar en contienda para ver quein es el router designado y
+el router de backup.
 
 Vamos a estar en el área 0 (área backbone o principal).
 
 Se va a configurar el router ip manual (para no utilizar las ips)
 
-Si se usan las ips, el de mayor ip sería el router designado. El router de backup
-corresponderá al router que tiene una ip menor que la del designado.
+Si se usan las ips, el de mayor ip sería el router designado. El router de
+backup corresponderá al router que tiene una ip menor que la del designado.
 
 
 [source,sh]
@@ -204,7 +220,8 @@ show ip ospf neighbor
 clear ip ospf process 
 ----
 
-Observar que para el caso de los router que no son DR ni BDR tienen la siguiente información en su tabla de vecinos
+Observar que para el caso de los router que no son DR ni BDR tienen la siguiente
+información en su tabla de vecinos
 
 image::neighbor-top02.png[]
 
@@ -227,11 +244,13 @@ show ip ospf database
 
 image::top03.png[]
 
-Para lograr la comunicación entre las diferentes áreas debe de haber un router que "hable" el área 0. Todas las comunicaciones deben pasar por _el área 0_.
+Para lograr la comunicación entre las diferentes áreas debe de haber un router
+que "hable" el área 0. Todas las comunicaciones deben pasar por _el área 0_.
 
 Es utilizado en topologías muy grandes.
 
-_Los router frontera_ son los encargados de hacer adyancencia enre un área y otra.
+_Los router frontera_ son los encargados de hacer adyancencia enre un área y
+otra.
 
 [source,sh]
 ----
@@ -249,25 +268,28 @@ Si en el área 0 vemos la *tabla de enrutamiento*
 
 image:ia.png[]
 
-Observamos que hay un segmento aprendido por OSPF, sin embargo, tiene una etiqueta que dice "IA", significa InterArea, es decir que es un segmento aprendido pero de otra área.
+Observamos que hay un segmento aprendido por OSPF, sin embargo, tiene una
+etiqueta que dice "IA", significa InterArea, es decir que es un segmento
+aprendido pero de otra área.
 
 Ahora bien, si revisamos la tabla de base de datos
 
 image::database-multiarea.png[]
 
 .Tipos de link state
-* Tipo 1. Router Link States + Para todos los dispositivos conectados en la misma área
+* Tipo 1. Router Link States + Para todos los dispositivos conectados en la 
+misma área
 * Tipo 2. Net Link State + Para el router designdado DR
 * TIpo 3. Sumary Net Link States + Para los routers frontera
 * Tipo 4 y 5: Redistribución.
 
-
-En los routers frontera se desplega la información para ambas áreas con las que se puede comunicar.
-
+En los routers frontera se desplega la información para ambas áreas con las que
+se puede comunicar.
 
 [NOTE]
 ====
-Redistribución: Es útil para comunicar dispositivos que utilizan distintos protocolos para comunicarse: RIP, EIGRP
+Redistribución: Es útil para comunicar dispositivos que utilizan distintos
+protocolos para comunicarse: RIP, EIGRP
 
 _¿Como haremos para que el área 1 se comunique al área 3?_
 
@@ -307,7 +329,8 @@ show clock
 clock set 05:05:20 29 APRIL 2020
 ----
 
-Para configuración del servidor NTP, elegimos nuestro servidos. Por default esta encendido, solo se debe verificar.
+Para configuración del servidor NTP, elegimos nuestro servidos. Por default esta
+encendido, solo se debe verificar.
 
 [source,sh]
 ----
@@ -368,7 +391,8 @@ creamos una _loopback_
 interface loopback 1
 ----
 
-Para hacer la configuración del switch necesitamos ponerle una ip a la VLAN y un gateway.
+Para hacer la configuración del switch necesitamos ponerle una ip a la VLAN y un
+gateway.
 
 Para probar que sirve:
 
@@ -390,11 +414,4 @@ logging trap warnings
 loggin trap <0-7>
 
 ----
-
-
-
-
-
-
-
 
