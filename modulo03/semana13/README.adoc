@@ -1,0 +1,340 @@
+= Semana 13
+Creado por Rodrigo Francisco <rhodfra@gmail.com>
+Version 1.0, 07.01.2021
+:description: Semana 13 del curso de CCNA
+//:keywords: 
+:sectnums: 
+// Configuracion de la tabla de contenidos
+:toc: 
+:toc-placement!:
+:toclevels: 4                                          
+:toc-title: Contenido
+
+// Ruta base de las imagenes
+:imagesdir: ./README.assets/ 
+
+// Resaltar sintaxis
+:source-highlighter: pygments
+
+// Iconos para entorno local
+ifndef::env-github[:icons: font]
+
+// Iconos para entorno github
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Semana 13 del curso de Cisco CNNA
+
+toc::[]
+
+== ACL (Access List)
+
+Listas de control de acceso
+
+Nos permiten autorizar o denegar el acceso a una determinada red. Puede ser de
+host a host.
+
+Las ACL se configurar en los routers, pasan a ser algo similiar a _firewalls_
+
+Se suele utilizar para bloquear el tráfico, usualmente a páginas de redes
+sociales, netflix, etc.
+
+Es importante destacar que no bloquea las ips sino los puertos
+
+=== Access-List estandar
+
+* Se declara IP de origen
+* Se recomienda que se configure lo más cerca de ldestino
+* Se enumeran de la 1 a la 99
+
+[source,sh]
+----
+access-list X permit/deny Y.Y.Y.Y Z.Z.Z.Z
+# donde X es el numero de access list 
+#       Y es el segmento de red 
+#       Z es la wildcard (restar 255.255.255.255) a la máscara de subred 
+
+ip access-group X host
+
+----
+
+[NOTE] 
+La wildcard se suele conocer como el inverso de la máscara de subred
+
+==== Ejercicio
+
+Denegar todo servicio de vlan 10 a vlan 30 y 40
+
+Se utilizará la siguiente topología
+
+image::acl01.png[]
+
+
+Recordar configurar lo más cercano al destino, por esa razón se configura en R2
+
+Primero vamos a configurarla en R0, para ver si nos conviene
+
+[source,sh]
+----
+access-list 1 deny 192.168.10.0 0.0.0.255 
+access-list 1 deny any
+
+interface fa0/0.100
+ip access-group 1 in
+
+----
+
+Ahora, observar que se bloqueo el acceso al segmento de vlan 20. Por esa razón
+es una mala idea escoger al R0 
+
+Para quitarlo poder ingresar
+
+[source,sh]
+----
+no access-list 1 
+
+----
+
+Vamos a intentar ahora con R2 
+
+[source,sh]
+----
+access-list 1 deny host 192.168.10.1
+
+----
+
+Podemos aplicar la lista de control a las interfaces lógicas (.30 y .40) o a la
+inferfaz serial 0/0/0.
+
+Nos conviene hacerlo en la interface serial para no desperdiciar poder der
+procesamiento.
+
+[source,sh]
+----
+interface se0/0/0
+ip access-group 1 in 
+exit 
+
+# Debemos de permitir todo el trafico restante
+access-list 1 permit any
+
+----
+
+
+=== Access-List extendida
+
+
+Permite bloquear varios servicios, puertos y/o protocolos.
+
+* Se declaran 
+** Ip de origen
+** Ip de destino
+** Protocolo
+** Y es opcionar dar un puerto
+* Se recomienda que se configure lo más cerca al origen
+* Se numeran de la 100 a la 199 
+
+[source,sh]
+----
+access-list A permit/deny B C.C.C.C D.D.D.D E.E.E.E F.F.F.F eq G
+# Donde A es el número de access list 
+#       B es el protocolo
+#       C es el segmento de red de origen 
+#       D es la wildcard de origen 
+#       E es el segmento de red de destino 
+#       F es la wildcard de destino 
+#       eq -> equal/igual
+#       G es el puerto 
+
+----
+
+==== Ejercicio
+
+Se usa la misma topología. No olvidar quitar la lista de acceso puesta en R2.
+
+El ejercicio consiste en denegar el servicio web al host 192.168.20.1
+
+[source,sh]
+----
+access-list 101 deny host tcp 192.168.20.1 host 192.168.30.1 eq 80 
+
+#access-list 101 deny host tcp 192.168.20.0 0.0.0.255 192.168.30.0 0.0.0.255 eq
+#80
+
+access-list 101 permit ip any any
+
+interface fa0/0.20
+ip access-group 101 in 
+
+----
+
+Para probar vamos al host de la VLAN 20 e intentamos entrar a la página web
+
+Otra prueba que debería ser exitoso sería mandar un ping 
+
+
+==== Tarea
+
+Denegar el ping entre todos los host y el servidor web
+
+== NAT (Network Address Translation)
+
+Traducción de ip's privadas a pública
+
+(Puede ser varias direcciones privadas a una pública)
+
+Se aplica para salir a internet. Es una capa más de seguridad
+
+.Se tiene 3 tipos de NATs
+*NAT estático* 
+
+image::nat-estatico.png[]
+
+*NAT dinámico*
+
+image::nat-dinamico.png[]
+
+Van a tomar aleatoriamente una dirección del pool para salir a internet.
+
+¿Qué pasa si ya esta ocupado el pool? Se debe esperar a que se libere alguna
+dirección IP para salir.
+
+*NAT de sobreflujo o PAT*
+
+image::pat.png[]
+
+Todas las direcciones salen por una sola IP
+
+=== Comandos
+
+Se hará la configuración de tipo PAT.
+
+La configuración se realiza en el router que sale a internet.
+
+_Se requiere de una ACL para poder realizar la configuración._
+
+**Configuración del NAT**
+
+[source,sh]
+----
+###############         PASO 1         ###############
+access-list X permit x.x.x.x x.x.x.x
+ip nat inside sourcelist X interface fa/gi$/$ overload
+# donde 
+#     X   es el número de la ACL 
+#     $/$ es el número de la interfaz de traducción
+
+###############         PASO 2         ###############
+interface fax/x
+ip nat inside/outside
+
+----
+
+**Comandos show**
+
+[source,sh]
+----
+show ip nat statistics
+show ip nat translations
+
+----
+
+[IMPORTANT]
+La tabla de traducción generada nos ayuda a hacer la comunicación bidireccional
+entre los servicios de internet y nuestros host. Tal como pasa en nuestras
+laptops y nuestro modem.
+
+=== Simulación
+
+*Ejercicio*. PAT en R1 para que los host de VLAN 10, 20 y 40 salgan a internet
+por medio de la NAT.
+
+image:natop.png[]
+
+[NOTE]
+====
+Es la misma topología que para las listas de control de acceso. No olvidar
+quitar las ACL. También recordar no se puede enrutar Internet. Configurar la
+ip-estática. Por último, cambiar el DNS al de internet.
+====
+
+[source,sh]
+----
+access-list 1 permit 192.168.10.0 0.0.0.255
+access-list 1 permit 192.168.20.0 0.0.0.255
+access-list 1 permit 192.168.40.0 0.0.0.255
+access-list 1 deny 192.168.30.0 0.0.0.255
+
+ip nat inside source list 1 interface fa0/0 overload
+interface fa0/0
+ip nat outside 
+
+interface se0/0/0
+ip nate inside
+
+interface se0/0/1
+ip nate inside
+
+----
+
+== Redes inálambricas
+
+Y AP (Access Point)
+
+Realizar la siguiente configuración
+
+image::wireless.png[]
+
+.Las redes inálambricas:
+* Se basan en el estándar 802.11x
+* Identificador (SSID)
+* Asociar (DHCP)
+
+La diferencia entre *router inálambrico* y *AP* es que el router va a dividir en
+2 segmentos. Uno para las redes cableadas y el otro para dispositivos
+inálambricos. En cambio, el AP va a funcionar como una antena o como repetidor.
+
+=== Access Point
+
+Para configurar el AP se debe ir a _config_ y en el *port 1* configuramos lo
+siguiente:
+
+image::ap.png[]
+
+Para conectar la laptop al AP debemos irnos su configuración física, apagar la
+laplaptop (Boton arriba de la luz verde), quitar la tarjeta de red y poner una
+tarjeta inálambrica (se encuentra en la esquina derecha inferior). 
+
+Por último, En _Desktop_ se debe elegir PC wireless para buscar la red que hemos
+creado. Revisar que al terminar tengamos una dirección IP.
+
+=== Router inálambrico
+
+Se configura en la pestaña de _GUI_ y en *setup* realizar la siguiente
+configuración.
+
+image::wrouter01.png[]
+
+image::wrouter02.png[]
+
+No olvidar en guardar.
+
+Ahora nos pasamos a la siguiente pestaña, _wireless_
+
+image::wrouter03.png[]
+
+Vamos a _wireless security_ y configuramos una contraseña WEB.
+
+Finalmente, debemos configurar la laptop como se indicó en AP para poderse
+conectarse al router inálambrico.
+
+Verificar que el ping de la laptop a Internet sea exitoso y el ping de internet
+a la laptop falle.
+
+También se debe verificar que el ping de la laptop conecta inálambricamente
+llegue a laptop conectada al AP. Pero no viceversa.
