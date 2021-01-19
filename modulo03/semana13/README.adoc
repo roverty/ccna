@@ -161,10 +161,10 @@ El ejercicio consiste en denegar el servicio web al host 192.168.20.1
 
 [source,sh]
 ----
-access-list 101 deny host tcp 192.168.20.1 host 192.168.30.1 eq 80 
+# En R0
+access-list 101 deny tcp host 192.168.20.1 host 192.168.30.1 eq 80 
 
-#access-list 101 deny host tcp 192.168.20.0 0.0.0.255 192.168.30.0 0.0.0.255 eq
-#80
+#access-list 101 deny tcp 192.168.20.0 0.0.0.255 192.168.30.0 0.0.0.255 eq 80
 
 access-list 101 permit ip any any
 
