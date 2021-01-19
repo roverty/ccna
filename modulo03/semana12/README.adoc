@@ -125,7 +125,7 @@ image::top01.png[]
 [source,sh]
 ----
 interface loopback <num>
-ip address <IP>/<MASK>
+ip address <IP> <MASK>
 exit
 ----
 
@@ -150,7 +150,7 @@ Veamos como quedaron algunas tablas para verificar la información del OSPF
 
 [source,sh]
 ----
-ip osfp interface se0/0/0           # No nos muestra la prioridad
+show ip osfp interface se0/0/0      # No nos muestra la prioridad
                                     # Quiere decir que no hay router designado
 ----
 
@@ -158,7 +158,7 @@ image::ospf-interface.png[]
 
 [source,sh]
 ----
-ip route                            # O -> OSPF
+show ip route                            # O -> OSPF
 ----
 
 [source,sh]
@@ -168,7 +168,7 @@ show ip ospf neighbor
 
 [source,sh]
 ----
-show ip osf database
+show ip ospf database
 ----
 
 ==== Broadcast
