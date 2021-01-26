@@ -1,0 +1,59 @@
+= Semana 14
+Creado por Rodrigo Francisco <rhodfra@gmail.com>
+Version 1.0, 07.01.2021
+:description: Semana 14 del curso de CCNA
+//:keywords: 
+:sectnums: 
+// Configuracion de la tabla de contenidos
+:toc: 
+:toc-placement!:
+:toclevels: 4                                          
+:toc-title: Contenido
+
+// Ruta base de las imagenes
+:imagesdir: ./README.assets/ 
+
+// Resaltar sintaxis
+:source-highlighter: pygments
+
+// Iconos para entorno local
+ifndef::env-github[:icons: font]
+
+// Iconos para entorno github
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+Semana 13 del curso de Cisco CNNA
+
+toc::[]
+
+== Feedback
+
+[options="interactive"]
+* [x] NTP MASTER CONFIGUARADO (0.66)
+* [x] TODOS LOS SWITCHES Y ROUTER ACTUALIZADOS EN HORA Y FECHA (0.66)
+* [x] LOG DE BPDU GUARD EN EL SERVIDOR SYSLOG (0.66)
+* [x] TODOS LOS ROUTERS PUEDEN MANDAR LOGS AL SERVIDOR SYSLOG (0.66)
+* [x] ACCESS POINT FUNCIONANDO (0.66)
+* [x] ROUTER INALAMBRICO FUNCIONANDO (0.66)
+* [x] CONTRASEÑA DE R5: T0PoL0g14_FiN4L_G3n21_:( (0.66)
+* [x] CONTRASEÑA DE R1: Ex1t0_G3n21_:D (0.66)
+* [x] CONTRASEÑA DE R3: CoN_ToD0_MeN05_CoN_Mi3D0 (0.66)
+* [x] CONTRASEÑA DE R4: Fu3Un6u5T0CoN0c3rL05 (0.66)
+* [x] RECUPERACIÓN DE SO EN R2 (0.66)
+* [x] NAT FUNCIONANDO (0.66)
+* [x] SOLO LAS LAPTOP Y EL HOST PC1 PUEDEN SALIR A INTERNET (0.66)
+* [x] NO DEBE RESPONDER PING EN LA TOPOLOGÍA (0.66)
+* [x] TABLA DE ENRUTAMIENTO COMPLETA (0.66)
+
+=== Reglas de ACL aplicadas a todos los routers (menos R4, tiene otra más)
+access-list 102 deny icmp any any 
+access-list 102 permit ip any any
+interface ...
+ip access-group 102 in 
+ip access-group 102 out 
