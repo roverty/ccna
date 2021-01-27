@@ -124,7 +124,7 @@ Tenemos que dar ips flotantes (no estan asociadas a ninguna interfaz)
 [source,sh]
 ----
 IP_ADDRESS=192.168.1.10         #IP flotante para router
-IP-SUBNET_MASK=255.255.255.0
+IP_SUBNET_MASK=255.255.255.0
 DEFAULT_GATEWAY=192.168.1.254
 TFTP_SERVER=192.168.1.1
 TFTP_FILE=archivo.bin
