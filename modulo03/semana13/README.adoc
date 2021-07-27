@@ -275,10 +275,10 @@ interface fa0/0
 ip nat outside 
 
 interface se0/0/0
-ip nate inside
+ip nat inside
 
 interface se0/0/1
-ip nate inside
+ip nat inside
 
 ----
 
